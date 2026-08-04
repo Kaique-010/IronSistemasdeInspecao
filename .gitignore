@@ -1,0 +1,11 @@
+.env
+.env.test
+.env.production
+venv
+docs/
+backend/venv/
+cache/
+migrations/
+pycache/
+*.pyc
+__pycache__/

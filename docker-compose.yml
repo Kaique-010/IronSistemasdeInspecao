@@ -1,0 +1,128 @@
+name: iron-sistema-de-inspecao
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+
+    container_name: iron-api
+
+    volumes:
+      - ./backend:/app
+
+    ports:
+      - '8000:8000'
+
+    env_file:
+      - .env
+
+    depends_on:
+      iron-db:
+        condition: service_healthy
+
+      iron-ai-db:
+        condition: service_healthy
+
+    networks:
+      - iron-network
+
+  iron-db:
+    image: postgres:17
+
+    container_name: iron-db
+
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    ports:
+      - '5433:5432'
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+    networks:
+      - iron-network
+
+  iron-ai-db:
+    image: pgvector/pgvector:pg17
+
+    container_name: iron-ai-db
+
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${VECTOR_DB}
+      POSTGRES_USER: ${VECTOR_USER}
+      POSTGRES_PASSWORD: ${VECTOR_PASSWORD}
+
+    ports:
+      - '5434:5432'
+
+    volumes:
+      - postgres_ai_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${VECTOR_USER} -d ${VECTOR_DB}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+    networks:
+      - iron-network
+
+  iron-redis:
+    image: redis:7-alpine
+
+    container_name: iron-redis
+
+    restart: unless-stopped
+
+    ports:
+      - '6379:6379'
+
+    networks:
+      - iron-network
+
+  iron-minio:
+    image: minio/minio
+
+    container_name: iron-minio
+
+    command: server /data --console-address ":9001"
+
+    restart: unless-stopped
+
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+
+    volumes:
+      - minio_data:/data
+
+    networks:
+      - iron-network
+
+volumes:
+  postgres_data:
+
+  postgres_ai_data:
+
+  minio_data:
+
+networks:
+  iron-network:
+    driver: bridge
