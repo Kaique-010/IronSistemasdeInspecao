@@ -1,4 +1,5 @@
-from core.tenant_context import get_current_tenant
+from core.tenant_context import obter_tenant_atual
+from core.tenant_utils import registrar_banco_tenant
 
 
 class TenantRouter:
@@ -6,10 +7,12 @@ class TenantRouter:
 
     def db_for_read(self, model, **hints):
 
-        tenant = get_current_tenant()
+        tenant = obter_tenant_atual()
 
         if tenant:
-            return tenant.banco
+            return registrar_banco_tenant(
+                tenant.banco
+            )
 
         return "default"
 
@@ -17,10 +20,12 @@ class TenantRouter:
 
     def db_for_write(self, model, **hints):
 
-        tenant = get_current_tenant()
+        tenant = obter_tenant_atual()
 
         if tenant:
-            return tenant.banco
+            return registrar_banco_tenant(
+                tenant.banco
+            )
 
         return "default"
 
@@ -33,5 +38,8 @@ class TenantRouter:
 
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):
+
+        if db.startswith("iron_"):
+            return True
 
         return True

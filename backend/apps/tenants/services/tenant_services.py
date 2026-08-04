@@ -1,7 +1,8 @@
 from django.db import connection
 from django.utils.text import slugify
-
-from .models import Empresa
+from core.tenant_utils import registrar_banco_tenant
+from ..models import Empresa
+from apps.tenants.services.provisionamento import ProvisionamentoService
 
 
 class TenantService:
@@ -42,3 +43,10 @@ class TenantService:
             cursor.execute(
                 f'CREATE DATABASE "{nome_banco}"'
             )
+
+        registrar_banco_tenant(
+            nome_banco
+        )
+        ProvisionamentoService.executar_migracoes_tenant(
+            nome_banco
+        )
