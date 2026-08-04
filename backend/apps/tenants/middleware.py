@@ -1,9 +1,8 @@
 from django.utils.deprecation import MiddlewareMixin
 
 from .models import Empresa
-from core.tenant_context import (
-    set_current_tenant,
-    clear_current_tenant
+from core.tenant_context import ( obter_tenant_atual, setar_tenant_atual
+
 )
 
 
@@ -23,7 +22,7 @@ class TenantMiddleware(MiddlewareMixin):
 
                 request.tenant = empresa
 
-                set_current_tenant(empresa)
+                setar_tenant_atual(empresa)
 
             except Empresa.DoesNotExist:
                 request.tenant = None
@@ -34,6 +33,6 @@ class TenantMiddleware(MiddlewareMixin):
 
     def process_response(self, request, response):
 
-        clear_current_tenant()
+        setar_tenant_atual(None)
 
         return response
