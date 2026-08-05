@@ -1,0 +1,182 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>IRON | {{ tenant.nome }} - Inspeção</title>
+    <link rel="stylesheet" href="{% static 'ia/css/iron.css' %}">
+</head>
+<body>
+
+<header class="iron-topbar">
+    <a class="iron-brand" href="{% url 'tenant_home' tenant.slug %}">
+        <span class="iron-marca">IRON</span>
+    </a>
+
+    <div class="iron-tenant-badge">
+        /{{ tenant.slug }}/ &nbsp;|&nbsp; {{ tenant.nome }}
+    </div>
+
+    <nav>
+        <a class="iron-link" href="{% url 'admin:index' %}">Administração</a>
+        <a class="iron-link" href="{% url 'tenant_home' tenant.slug %}">Inspeção</a>
+
+        {% if user.is_authenticated %}
+            <form method="post" action="{% url 'admin:logout' %}" style="display:inline">
+                {% csrf_token %}
+                <button type="submit" class="iron-link iron-sair" style="background:none;border:none;cursor:pointer">
+                    Sair ({{ user.username }})
+                </button>
+            </form>
+        {% endif %}
+    </nav>
+</header>
+
+<main class="iron-container">
+
+    <h1 class="iron-titulo-pagina">
+        Linha de Inspeção <span class="iron-gold">{{ tenant.nome }}</span>
+    </h1>
+    <p class="iron-subtitulo">
+        Detecção em tempo real com visão computacional &mdash; ambiente {{ tenant.slug }}
+    </p>
+
+    <section class="iron-stats" style="margin-top:1.5rem">
+        <div class="iron-stat">
+            <strong>{{ quantidade_produtos }}</strong>
+            <span>Produtos</span>
+        </div>
+        <div class="iron-stat">
+            <strong>{{ quantidade_workflows }}</strong>
+            <span>Workflows ativos</span>
+        </div>
+        <div class="iron-stat">
+            <strong>{{ modelos|length }}</strong>
+            <span>Modelos de IA</span>
+        </div>
+        <div class="iron-stat">
+            <strong>YOLO</strong>
+            <span>Motor de detecção</span>
+        </div>
+    </section>
+
+    <div class="iron-grid">
+
+        <aside class="iron-painel">
+            <h2>Configuração da inspeção</h2>
+
+            <form id="form-deteccao" action="{% url 'tenant_detectar' tenant.slug %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="exemplo" id="campo-exemplo" value="">
+
+                <label for="id-workflow">Workflow</label>
+                <select name="workflow" id="id-workflow" class="iron-select">
+                    {% for wf in workflows %}
+                        <option value="{{ wf.id }}">{{ wf.nome }} &mdash; {{ wf.produto.nome }}</option>
+                    {% empty %}
+                        <option value="">Nenhum workflow cadastrado</option>
+                    {% endfor %}
+                </select>
+
+                <label for="id-modelo">Modelo de IA</label>
+                <select name="modelo" id="id-modelo" class="iron-select">
+                    <option value="">Padrão (abacaxi / tomate)</option>
+                    {% for m in modelos %}
+                        <option value="{{ m.id }}">{{ m }}</option>
+                    {% endfor %}
+                </select>
+
+                <label>Exemplos (clique para selecionar)</label>
+                <div class="iron-exemplos" id="lista-exemplos">
+                    <div class="iron-exemplo" data-arquivo="abacaxi_1.jpg">
+                        <img src="{% static 'ia/samples/abacaxi_1.jpg' %}" alt="Abacaxi">
+                        <span>Abacaxi</span>
+                        <div class="iron-check">&#10003;</div>
+                    </div>
+                    <div class="iron-exemplo" data-arquivo="abacaxi_2.jpg">
+                        <img src="{% static 'ia/samples/abacaxi_2.jpg' %}" alt="Abacaxi">
+                        <span>Abacaxi</span>
+                        <div class="iron-check">&#10003;</div>
+                    </div>
+                    <div class="iron-exemplo" data-arquivo="tomate_1.jpg">
+                        <img src="{% static 'ia/samples/tomate_1.jpg' %}" alt="Tomate">
+                        <span>Tomate</span>
+                        <div class="iron-check">&#10003;</div>
+                    </div>
+                    <div class="iron-exemplo" data-arquivo="tomate_2.jpg">
+                        <img src="{% static 'ia/samples/tomate_2.jpg' %}" alt="Tomate">
+                        <span>Tomate</span>
+                        <div class="iron-check">&#10003;</div>
+                    </div>
+                    <div class="iron-exemplo" data-arquivo="tomate_3.jpg">
+                        <img src="{% static 'ia/samples/tomate_3.jpg' %}" alt="Tomate">
+                        <span>Tomate</span>
+                        <div class="iron-check">&#10003;</div>
+                    </div>
+                </div>
+
+                <label for="id-imagem">Ou envie uma imagem</label>
+                <input type="file" name="imagem" id="id-imagem" class="iron-input" accept="image/*">
+
+                <button type="submit" class="iron-btn" id="btn-detectar">
+                    Executar detecção
+                </button>
+            </form>
+        </aside>
+
+        <section>
+            <div class="iron-painel">
+                <h2>Esteira de inspeção</h2>
+
+                <div class="iron-esteira" id="esteira">
+                    <div class="iron-scan"></div>
+                    <div class="iron-scan-rotulo">SCAN // YOLO</div>
+                    <div class="iron-esteira-trilho"></div>
+                    <div class="iron-esteira-superficie"></div>
+
+                    <div class="iron-esteira-itens">
+                        <div class="iron-esteira-item" style="left: 0%; animation-delay: 0s">
+                            <img src="{% static 'ia/samples/abacaxi_1.jpg' %}" alt="Abacaxi">
+                        </div>
+                        <div class="iron-esteira-item" style="left: 22%; animation-delay: 1.4s">
+                            <img src="{% static 'ia/samples/tomate_1.jpg' %}" alt="Tomate">
+                        </div>
+                        <div class="iron-esteira-item" style="left: 44%; animation-delay: 2.8s">
+                            <img src="{% static 'ia/samples/abacaxi_2.jpg' %}" alt="Abacaxi">
+                        </div>
+                        <div class="iron-esteira-item" style="left: 66%; animation-delay: 4.2s">
+                            <img src="{% static 'ia/samples/tomate_2.jpg' %}" alt="Tomate">
+                        </div>
+                        <div class="iron-esteira-item" style="left: 88%; animation-delay: 5.6s">
+                            <img src="{% static 'ia/samples/tomate_3.jpg' %}" alt="Tomate">
+                        </div>
+                    </div>
+
+                    <div class="iron-esteira-legenda">inspeção contínua &mdash; aguardando imagem</div>
+                </div>
+            </div>
+
+            <div class="iron-painel" style="margin-top:1.5rem">
+                <h2>Resultado da detecção</h2>
+
+                <div id="area-resultado">
+                    <p class="iron-subtitulo">
+                        Selecione um workflow, escolha um exemplo ou envie uma imagem e clique em
+                        <b style="color:var(--iron-dourado)">Executar detecção</b>.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+</main>
+
+<footer class="iron-rodape">
+    <b>IRON</b> &mdash; Sistema de Inspeção Industrial com IA &middot; tenant: {{ tenant.slug }}
+</footer>
+
+<script src="{% static 'ia/js/deteccao.js' %}"></script>
+</body>
+</html>

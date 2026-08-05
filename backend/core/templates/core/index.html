@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>IRON | Sistema de Inspeção Industrial</title>
+    <link rel="stylesheet" href="{% static 'ia/css/iron.css' %}">
+</head>
+<body>
+
+<header class="iron-topbar">
+    <a class="iron-brand" href="{% url 'index' %}">
+        <span class="iron-marca">IRON</span>
+    </a>
+
+    <nav>
+        {% if user.is_authenticated %}
+            <span class="iron-subtitulo" style="margin:0">{{ user.username }}</span>
+            <a class="iron-link" href="{% url 'admin:index' %}">Administração</a>
+        {% else %}
+            <a class="iron-link" href="{% url 'admin:login' %}">Acessar</a>
+        {% endif %}
+    </nav>
+</header>
+
+<main class="iron-container">
+
+    <div style="text-align:center; padding: 3rem 0 2rem">
+        <h1 class="iron-titulo-pagina" style="font-size:2.6rem">
+            Sistema de <span class="iron-gold">Inspeção Industrial</span>
+        </h1>
+        <p class="iron-subtitulo" style="font-size:1.05rem; max-width:640px; margin:0.75rem auto">
+            Plataforma multi-tenant de visão computacional para controle de qualidade em linhas de produção.
+            Cada empresa opera com banco de dados isolado e modelos de IA próprios.
+        </p>
+    </div>
+
+    {% if user.is_authenticated %}
+
+        {% if empresas %}
+            <section>
+                <h2 class="iron-painel" style="display:inline-block; padding:0.5rem 1.2rem; text-transform:uppercase; letter-spacing:0.2em; font-size:0.85rem; color:var(--iron-dourado)">
+                    Selecione a empresa para inspecionar
+                </h2>
+
+                <div class="iron-cards" style="margin-top:1.25rem">
+                    {% for empresa in empresas %}
+                        <a class="iron-card-empresa" href="{% url 'tenant_home' empresa.slug %}">
+                            <h3>{{ empresa.nome }}</h3>
+                            <code>/{{ empresa.slug }}/</code>
+                        </a>
+                    {% endfor %}
+                </div>
+            </section>
+        {% else %}
+            <div class="iron-painel" style="text-align:center">
+                <p>Você ainda não tem acesso a nenhuma empresa.</p>
+                <p class="iron-subtitulo">Peça ao administrador para vincular você como membro de uma empresa.</p>
+            </div>
+        {% endif %}
+
+    {% else %}
+
+        <div class="iron-painel" style="text-align:center; max-width:520px; margin:1.5rem auto">
+            <p style="margin-bottom:1.25rem">
+                Entre com suas credenciais para acessar a linha de inspeção da sua empresa.
+            </p>
+            <a class="iron-btn" href="{% url 'admin:login' %}">Entrar no sistema</a>
+        </div>
+
+    {% endif %}
+
+</main>
+
+<footer class="iron-rodape">
+    <b>IRON</b> &mdash; Sistema de Inspeção Industrial com IA &middot; multi-tenant &middot; YOLO &middot; Django
+</footer>
+
+</body>
+</html>
