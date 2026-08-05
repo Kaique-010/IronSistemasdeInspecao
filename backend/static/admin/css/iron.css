@@ -1,0 +1,139 @@
+:root {
+    --iron-dourado: #d4af37;
+    --iron-dourado-claro: #f2d97a;
+    --iron-azul-900: #060d1f;
+    --iron-azul-800: #0b1e3d;
+    --iron-prata: #c0c0c0;
+}
+
+body {
+    background: var(--iron-azul-900);
+}
+
+/* Marca */
+.navbar-brand,
+.brand-link {
+    color: var(--iron-dourado) !important;
+    letter-spacing: 0.25em;
+    font-weight: 800;
+}
+
+/* Topo */
+.main-header.navbar {
+    background: linear-gradient(180deg, var(--iron-azul-800), var(--iron-azul-900));
+    border-bottom: 1px solid rgba(212, 175, 55, 0.35);
+}
+
+/* Sidebar */
+.main-sidebar {
+    background: var(--iron-azul-800);
+}
+
+.nav-sidebar .nav-item > .nav-link {
+    color: var(--iron-prata);
+}
+
+.nav-sidebar .nav-item > .nav-link:hover,
+.nav-sidebar .nav-item > .nav-link.active {
+    background: rgba(212, 175, 55, 0.12);
+    color: var(--iron-dourado-claro);
+    border-left: 3px solid var(--iron-dourado);
+}
+
+/* Menu de topo (dropdowns) */
+.navbar-nav .nav-link {
+    color: var(--iron-prata);
+}
+
+.navbar-nav .nav-link:hover {
+    color: var(--iron-dourado-claro);
+}
+
+.dropdown-menu {
+    background: var(--iron-azul-800);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.dropdown-item {
+    color: var(--iron-prata);
+}
+
+.dropdown-item:hover {
+    background: rgba(212, 175, 55, 0.12);
+    color: var(--iron-dourado-claro);
+}
+
+/* Títulos e cabeçalhos */
+.content-header h1 {
+    color: var(--iron-dourado);
+}
+
+.breadcrumb-item a,
+.breadcrumb-item.active {
+    color: var(--iron-prata);
+}
+
+/* Botões primários dourados */
+.btn-primary,
+.btn-success,
+.btn-danger,
+.btn-info,
+.btn-warning {
+    border: 1px solid var(--iron-dourado);
+    color: var(--iron-azul-900) !important;
+}
+
+.btn-primary:hover,
+.btn-success:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.4);
+}
+
+/* Tabelas */
+.table {
+    color: var(--iron-prata);
+}
+
+.table thead th {
+    color: var(--iron-dourado);
+    border-bottom-color: rgba(212, 175, 55, 0.4);
+}
+
+.table-hover tbody tr:hover {
+    background: rgba(26, 58, 110, 0.25);
+}
+
+/* Campos de formulário */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--iron-dourado);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+}
+
+/* Cards e painéis */
+.card {
+    background: rgba(11, 30, 61, 0.55);
+    border: 1px solid rgba(192, 192, 192, 0.18);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.card-header {
+    background: rgba(6, 13, 31, 0.6);
+    color: var(--iron-dourado);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+}
+
+/* Selo de tenant atual no admin */
+.iron-tenant-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: Consolas, monospace;
+    font-size: 0.8rem;
+    color: var(--iron-dourado-claro);
+    border: 1px solid rgba(212, 175, 55, 0.5);
+    border-radius: 999px;
+    padding: 0.25rem 0.9rem;
+    background: rgba(212, 175, 55, 0.08);
+    margin-right: 0.75rem;
+}
