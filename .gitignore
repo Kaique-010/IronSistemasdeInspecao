@@ -2,10 +2,28 @@
 .env.test
 .env.production
 venv
-docs/
 backend/venv/
 cache/
-migrations/
 pycache/
 *.pyc
 __pycache__/
+.pytest_cache/
+*.log
+.DS_Store
+
+# IA - artefatos pesados e modelos
+*.pt
+ia/.venv/
+ia/datasets/
+ia/runs/
+ia/treinamentos/
+ia/modelos/
+ia/pesos/
+ia/yolov8n.pt
+
+# Mídia gerada pela aplicação
+backend/media/
+
+# IDEs
+.idea/
+.vscode/

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.utils.text import slugify
 
@@ -52,3 +53,44 @@ class Empresa(models.Model):
             self.banco = f"iron_{self.slug.replace('-', '_')}"
 
         super().save(*args, **kwargs)
+
+
+class MembroEmpresa(models.Model):
+
+    class Papel(models.TextChoices):
+        ADMIN = 'admin', 'Administrador'
+        OPERADOR = 'operador', 'Operador'
+        VISUALIZADOR = 'visualizador', 'Visualizador'
+
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='membros',
+        verbose_name='Usuário',
+    )
+
+    empresa = models.ForeignKey(
+        Empresa,
+        on_delete=models.CASCADE,
+        related_name='membros',
+        verbose_name='Empresa',
+    )
+
+    papel = models.CharField(
+        max_length=20,
+        choices=Papel.choices,
+        default=Papel.OPERADOR,
+        verbose_name='Papel',
+    )
+
+    ativo = models.BooleanField(default=True)
+
+    data_cadastro = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Membro da Empresa'
+        verbose_name_plural = 'Membros das Empresas'
+        unique_together = ('usuario', 'empresa')
+
+    def __str__(self):
+        return f'{self.usuario} - {self.empresa.nome} ({self.get_papel_display()})'
